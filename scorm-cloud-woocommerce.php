@@ -32,6 +32,8 @@ if ( ! defined( 'WPINC' ) ) {
 
 define( 'SCORM_CLOUD_WOOCOMMERCE_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 
+require __DIR__ . '/vendor/autoload.php';
+
 /**
  * Currently plugin version.
  * Start at version 1.0.0 and use SemVer - https://semver.org

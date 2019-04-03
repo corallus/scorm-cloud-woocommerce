@@ -6,9 +6,7 @@
  * @copyright 2018 Vincent van Bergen
  * @license   GPL-2.0+
  */
-if ( ! class_exists( 'Gamajo_Template_Loader' ) ) {
-  require plugin_dir_path( dirname(__FILE__) ) . 'vendor/gamajo/template-loader/class-gamajo-template-loader.php';
-}
+
 /**
  * Template loader for Scorm_Cloud_Woocommerce.
  *
