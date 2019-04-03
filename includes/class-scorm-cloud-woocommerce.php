@@ -111,6 +111,9 @@ class Scorm_Cloud_Woocommerce {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-scorm-cloud-woocommerce-i18n.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/rustici-software/scorm-cloud/ScormEngineService.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'vendor/rustici-software/scorm-cloud/ServiceRequest.php';
+
 		/**
 		 * The class responsible for defining all actions that occur in the admin area.
 		 */
@@ -153,9 +156,8 @@ class Scorm_Cloud_Woocommerce {
 	private function define_admin_hooks() {
 
 		$plugin_admin = new Scorm_Cloud_Woocommerce_Admin( $this->get_plugin_name(), $this->get_version() );
-
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_styles' );
-		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_admin, 'enqueue_scripts' );
+		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_options_page' );
+		$this->loader->add_action( 'admin_init', $plugin_admin, 'register_setting' );
 
 	}
 
@@ -170,9 +172,9 @@ class Scorm_Cloud_Woocommerce {
 
 		$plugin_public = new Scorm_Cloud_Woocommerce_Public( $this->get_plugin_name(), $this->get_version() );
 
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_styles' );
-		$this->loader->add_action( 'wp_enqueue_scripts', $plugin_public, 'enqueue_scripts' );
-
+		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'scorm_order_status_completed' );
+		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
+		$this->loader->add_action( 'woocommerce_order_item_meta_start', $plugin_public, 'add_launch_to_order_item', 10, 3 );
 	}
 
 	/**
