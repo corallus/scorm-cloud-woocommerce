@@ -73,6 +73,7 @@ class Scorm_Cloud_Woocommerce_Public {
 		$user = $order->get_user();
 		if( $user ){
 			$items = $order->get_items();
+			$complete_order = false;
 			foreach ( $items as $item ) {
 				$product = wc_get_product( $item['product_id'] );
 				$course_id = get_post_meta( $product->get_id(), 'Course ID', true );
@@ -86,10 +87,13 @@ class Scorm_Cloud_Woocommerce_Public {
 							$user->user_email
 						);
 						$order->update_meta_data( 'registration_id', $result );
+						$complete_order = true;
 					}
 				}
 			}
-			$order->update_status( 'completed' );
+			if ($complete_order) {
+				$order->update_status( 'completed' );
+			}
 		}
 	}
 
