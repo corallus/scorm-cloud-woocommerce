@@ -86,11 +86,12 @@ class Scorm_Cloud_Woocommerce_Public {
 					$course_exists = $this->courseService->Exists($course_id);
 					if ($course_exists) {	
 						$result = $this->scormCloud->getInvitationService()->CreateInvitation(
-							$product->get_sku(),
+							$course_id,
 							'false',
 							'false',
 							$user->user_email
 						);
+						$order->update_meta_data( 'registration_id', $result );
 					}
 				}
 			}
@@ -99,47 +100,18 @@ class Scorm_Cloud_Woocommerce_Public {
 	}
 
 	/**
-	 * Adds link to order complete mail 
+	 * Adds SCORM cloud launch link to order
 	 *
 	 * @since    1.0.0
 	 */
 	function add_launch_to_order_item( $item_id, $item, $order ) { 
 		$product = wc_get_product( $item['product_id'] );
 		$course_id = get_post_meta( $product->get_id(), 'Course ID', true );
-		if ( $course_id ) {
-			$course_exists = $this->courseService->Exists($course_id);
-			if ($course_exists) {	
-				$user = $order->get_user();
-				$registrations = $this->regService->GetRegistrationList(
-					$course_id,
-					$user->user_email
-				);
-				foreach ( $registrations as $registration ) {
-					$launchUrl = $this->regService->GetLaunchUrl($registration->getRegistrationId(), get_permalink( get_option('woocommerce_myaccount_page_id') ));
-					echo "<br /><a class=\"launch-button\" href=\"$launchUrl\">Begin met de cursus</a>";
-				}
-			}
+		$registration_id = get_post_meta($order->get_id(), 'registration_id', true);
+		if ( $registration_id ) {
+			$launchUrl = $this->regService->GetLaunchUrl($registration_id, get_permalink($order->get_id()));
+			echo "<br /><a class=\"launch-button\" href=\"$launchUrl\">Begin met de cursus</a>";
 		}
 	}
 
-	function register_shortcodes() {
-		add_shortcode( 'registrations', array( $this, 'scorm_get_registrations') );
-	}
-
-	function scorm_get_registrations( ){
-		$user = wp_get_current_user();
-		$registrations = $this->regService->GetRegistrationList(
-			null,
-			$user->user_email
-		);
-
-		ob_start();
-		$this->template_loader->
-			set_template_data(array(
-				'registrations' => $registrations,
-				'regService' => $this->regService)
-			)->
-			get_template_part( 'registrations' );
-		return ob_get_clean();
-	}
 }

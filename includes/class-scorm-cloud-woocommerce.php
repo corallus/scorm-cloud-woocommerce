@@ -173,7 +173,6 @@ class Scorm_Cloud_Woocommerce {
 		$plugin_public = new Scorm_Cloud_Woocommerce_Public( $this->get_plugin_name(), $this->get_version() );
 
 		$this->loader->add_action( 'woocommerce_payment_complete', $plugin_public, 'scorm_order_status_completed' );
-		$this->loader->add_action( 'init', $plugin_public, 'register_shortcodes' );
 		$this->loader->add_action( 'woocommerce_order_item_meta_start', $plugin_public, 'add_launch_to_order_item', 10, 3 );
 	}
 
