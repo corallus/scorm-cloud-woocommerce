@@ -22,8 +22,6 @@
  */
 class Scorm_Cloud_Woocommerce_Public {
 
-	private $template_loader;
-
 	/**
 	 * The ID of this plugin.
 	 *
@@ -63,10 +61,6 @@ class Scorm_Cloud_Woocommerce_Public {
 			get_option('scorm_woo_origin'));
 		$this->regService = $this->scormCloud->getRegistrationService();
 		$this->courseService = $this->scormCloud->getCourseService();
-
-		require plugin_dir_path( dirname(__FILE__) ) . 'includes/class-scorm-cloud-woocommerce-template-loader.php';
-		$this->template_loader = new Scorm_Cloud_Woocommerce_Template_Loader;
-
 	}
 
 	/**

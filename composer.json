@@ -1,6 +1,5 @@
 {
 	"require": {
-		"rustici-software/scorm-cloud": "dev-master",
-		"gamajo/template-loader": "^1.3"
+		"rustici-software/scorm-cloud": "dev-master"
 	}
 }
