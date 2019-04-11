@@ -120,7 +120,6 @@ class Scorm_Cloud_Woocommerce_Public {
 				}
 			}
 		}
-		print_r();
 	}
 
 	function register_shortcodes() {
