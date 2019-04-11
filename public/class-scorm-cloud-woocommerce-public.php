@@ -81,7 +81,7 @@ class Scorm_Cloud_Woocommerce_Public {
 			$items = $order->get_items();
 			foreach ( $items as $item ) {
 				$product = wc_get_product( $item['product_id'] );
-				$course_id = $product->get_sku();
+				$course_id = get_post_meta( $product->get_id(), 'Course ID', true );
 				if ($course_id) {	
 					$course_exists = $this->courseService->Exists($course_id);
 					if ($course_exists) {	
@@ -105,7 +105,7 @@ class Scorm_Cloud_Woocommerce_Public {
 	 */
 	function add_launch_to_order_item( $item_id, $item, $order ) { 
 		$product = wc_get_product( $item['product_id'] );
-		$course_id = $product->get_sku();
+		$course_id = get_post_meta( $product->get_id(), 'Course ID', true );
 		if ( $course_id ) {
 			$course_exists = $this->courseService->Exists($course_id);
 			if ($course_exists) {	
@@ -120,6 +120,7 @@ class Scorm_Cloud_Woocommerce_Public {
 				}
 			}
 		}
+		print_r();
 	}
 
 	function register_shortcodes() {
