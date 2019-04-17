@@ -81,14 +81,11 @@ class Scorm_Cloud_Woocommerce_Public {
 					$course_exists = $this->courseService->Exists($course_id);
 					if ($course_exists) {	
 						$send = 'false';
-						$public = 'false';
 						$adresses = $user->user_email;
 						$registration_cap = 1;
 						$count = $item->get_quantity();
-						if ($count > 1) {
-							$public = 'true';
-							$registration_cap = $count;
-						}
+						$public = 'true';
+						$registration_cap = $count;
 						$result = $this->invService->CreateInvitation(
 							$course_id, 
 							$public, 
@@ -127,14 +124,9 @@ class Scorm_Cloud_Woocommerce_Public {
 		print_r($invitation_info);
 		echo '</pre>';	
 			 */
-			if ($item->get_quantity() > 1) {
-				$url = $invitation_info->url; 
-				echo '<p><strong>Link naar uitnodiging:<br /> '.$url.'</strong></p>';
-				echo '<p>Stuur deze link naar de cursisten die u wilt uitnodigen</p>';
-			} else {
-				$url = $invitation_info->userInvitations->userInvitation->url;
-				echo '<p><a class="launch-button" href="'.$url.'" target="_blank">Begin met de cursus</a></p>';
-			}
+			$url = $invitation_info->url; 
+			echo '<p><a class="launch-button" href="'.$url.'" target="_blank">Begin met de cursus</a></p>';
+			echo '<p><strong>of stuur deze link naar de cursist(en) die u wilt uitnodigen:</strong><br /> '.$url.'</p>';
 		}
 	}
 
