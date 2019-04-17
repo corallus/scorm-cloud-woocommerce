@@ -59,12 +59,12 @@ class Scorm_Cloud_Woocommerce_Public {
 			get_option('scorm_woo_appid'),
 			get_option('scorm_woo_apikey'),
 			get_option('scorm_woo_origin'));
-		$this->regService = $this->scormCloud->getRegistrationService();
+		$this->invService = $this->scormCloud->getInvitationService();
 		$this->courseService = $this->scormCloud->getCourseService();
 	}
 
 	/**
-	 * Creates Scorm cloud registration 
+	 * Creates Scorm cloud invitation 
 	 *
 	 * @since    1.0.0
 	 */
@@ -80,13 +80,27 @@ class Scorm_Cloud_Woocommerce_Public {
 				if ($course_id) {	
 					$course_exists = $this->courseService->Exists($course_id);
 					if ($course_exists) {	
-						$result = $this->scormCloud->getInvitationService()->CreateInvitation(
-							$course_id,
-							'false',
-							'false',
-							$user->user_email
+						$send = 'false';
+						$public = 'false';
+						$adresses = $user->user_email;
+						$registration_cap = 1;
+						$count = $item->get_quantity();
+						if ($count > 1) {
+							$public = 'true';
+							$registration_cap = $count;
+						}
+						$result = $this->invService->CreateInvitation(
+							$course_id, 
+							$public, 
+							$send, 
+							$adresses,
+							null,
+							null,
+							$user->user_email,
+							$registration_cap
 						);
-						$order->update_meta_data( 'registration_id', $result );
+						$invitation_id = simplexml_load_string($result);
+						$order->update_meta_data( 'invitation_id', (string)$invitation_id );
 						$complete_order = true;
 					}
 				}
@@ -103,12 +117,24 @@ class Scorm_Cloud_Woocommerce_Public {
 	 * @since    1.0.0
 	 */
 	function add_launch_to_order_item( $item_id, $item, $order ) { 
-		$product = wc_get_product( $item['product_id'] );
-		$course_id = get_post_meta( $product->get_id(), 'Course ID', true );
-		$registration_id = get_post_meta($order->get_id(), 'registration_id', true);
-		if ( $registration_id ) {
-			$launchUrl = $this->regService->GetLaunchUrl($registration_id, get_permalink($order->get_id()));
-			echo "<br /><a class=\"launch-button\" href=\"$launchUrl\">Begin met de cursus</a>";
+		$invitation_id = get_post_meta($order->get_id(), 'invitation_id', true);
+		if ( $invitation_id ) {
+			$invitation_xml = $this->invService->GetInvitationInfo($invitation_id, 'true');
+			$invitation = simplexml_load_string($invitation_xml, null, LIBXML_NOCDATA);
+			$invitation_info = $invitation->invitationInfo;
+			/*
+			echo '<pre>';	
+		print_r($invitation_info);
+		echo '</pre>';	
+			 */
+			if ($item->get_quantity() > 1) {
+				$url = $invitation_info->url; 
+				echo '<p><strong>Link naar uitnodiging:<br /> '.$url.'</strong></p>';
+				echo '<p>Stuur deze link naar de cursisten die u wilt uitnodigen</p>';
+			} else {
+				$url = $invitation_info->userInvitations->userInvitation->url;
+				echo '<p><a class="launch-button" href="'.$url.'" target="_blank">Begin met de cursus</a></p>';
+			}
 		}
 	}
 
