@@ -94,7 +94,7 @@ class Scorm_Cloud_Woocommerce_Public {
 							$public, 
 							$send, 
 							$adresses,
-							null,
+							'[COURSE] uitnodiging via agressietraining.nl door '.$user->user_email,
 							null,
 							$user->user_email,
 							$registration_cap
